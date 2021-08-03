@@ -1,0 +1,392 @@
+//AUTHOR: Sean Rutledge
+//COURSE: CPT167
+//PURPOSE: Creates a program to allow users to input their name, followed by a discount Option menu and an item selection menu. the user is only allowed to quit at the discount menu and an item menu. the program loops at the item selection menu, allowing users to return to the main menu by pressing r, once the user presses r a order report is shown of what was currently selected. Once a user quits the program a final report is displayed only if the user has went through each menu at least once. if a user selects any other letter than those avaivble the user is forced to type in a compatible answer. if a user selects a number less than or equal 0 then the user has to input a different number. at the end of the program after the user has selected what he/she wants another menu will appear showing the user what discounts have been selected and the total. 
+//STARTDATE: 7/21/2021
+
+package edu.cpt167.rutledge.exercise6;
+
+import java.util.Scanner; //Declare Scanner
+
+
+public class RutledgeMainClass {//begin class main
+	
+	//Declare Class Constants
+	final static double TAX_RATE = .075;
+	final static String DISCOUNT_NAME_MEMBER = "Member";
+	final static String DISCOUNT_NAME_SENIOR = "Senior";
+	final static String DISCOUNT_NAME_NONE = "No Discount";
+	final static String DISCOUNT_NAME_QUIT = "Quit";
+	final static double DISCOUNT_RATE_MEMBER = 0.15;
+	final static double DISCOUNT_RATE_SENIOR = 0.25;
+	final static double DISCOUNT_RATE_NONE = 0.0;
+	final static String ITEM_NAME_PREMUIM = "PC";
+	final static String ITEM_NAME_SPECIAL = "MAC";
+	final static String ITEM_NAME_BASIC = "Console";
+	final static String ITEM_NAME_RETURN = "Return to Main Menu";
+	final static double ITEM_PRICE_PREMIUM = 55.95;
+	final static double ITEM_PRICE_SPECIAL = 24.95;
+	final static double ITEM_PRICE_BASIC = 15.95;
+	final static int RESET_VALUE = 0;
+
+	public static void main(String[] args) {//begin main method
+		// TODO Auto-generated method stub
+		
+	Scanner input = new Scanner(System.in);//Declare Scanner
+		
+		//Declare variables 
+	String userName = "";
+	char rateSelection = ' ';
+	char itemSelection = ' ';
+	int howMany = 0;
+	String discountName = "";
+	double discountRate = 0;
+	String itemName = "";
+	double itemPrice = 0;
+	double discountAmount = 0;
+	double discountPrice = 0;
+	double subTotal = 0;
+	double tax = 0;
+	double totalCost = 0;
+	int memberCount = 0;
+	int seniorCount = 0;
+	int noDiscountRate = 0;
+	double grandTotal = 0;
+	int premiumCount = 0;
+	int specialCount = 0;
+	int basicCount = 0;
+	double purchaseAmt = 0;
+	
+	displayWelcomeBanner();//display welcome banner
+	
+	System.out.println("");//Blank line
+	
+	userName = getUserName(input);
+	
+	System.out.println("");//Blank line
+	
+	rateSelection = validateMainMenu(input);//displaying main menu
+	
+	while (rateSelection != 'Q')
+	{//begin while loop
+		
+		itemSelection = validateItemMenu(input);//displaying item menu
+		
+
+	while (itemSelection != 'R')
+	{//begin while loop
+		
+	
+		if (rateSelection == 'A')
+		{//Begin of if
+			discountRate = DISCOUNT_RATE_MEMBER;
+			discountName = DISCOUNT_NAME_MEMBER;
+			memberCount++;
+		}//End of if
+		
+		else if (rateSelection == 'B')
+		{//Begin of else if
+			discountRate = DISCOUNT_RATE_SENIOR;
+			discountName = DISCOUNT_NAME_SENIOR;
+			seniorCount++;
+		}//End of else if
+		
+		else 
+		{//Begin of else
+			discountRate = DISCOUNT_RATE_NONE;
+			discountName = DISCOUNT_NAME_NONE;
+			noDiscountRate++;
+		}//End of else
+		
+		if (itemSelection == 'A')
+		{//Begin of if
+			itemName = ITEM_NAME_PREMUIM;
+			itemPrice = ITEM_PRICE_PREMIUM;
+			premiumCount++;
+		}//Begin of if
+		
+		else if (itemSelection == 'B')
+		{//Begin of else if
+			itemName = ITEM_NAME_SPECIAL;
+			itemPrice = ITEM_PRICE_SPECIAL;
+			specialCount++;
+		}//End of else if
+		
+		else 
+		{//Begin of else
+			itemName = ITEM_NAME_BASIC;
+			itemPrice = ITEM_PRICE_BASIC;
+			basicCount++;
+		}//End of else
+	
+	
+
+	
+	System.out.println("");//Blank line
+	
+
+	
+	howMany = validateHowMany(input);//how many input
+	
+	System.out.println("");//Blank line
+	
+
+	
+	//Calculations
+	
+	discountAmount = itemPrice * discountRate;
+	discountPrice = itemPrice - discountAmount;
+	purchaseAmt = howMany * discountPrice;
+	subTotal = subTotal + purchaseAmt;
+	
+
+
+
+	
+	System.out.println("");//Blank line
+	
+	displayItemReceipt(itemName, itemPrice, discountName, discountRate, discountAmount, discountPrice, howMany, purchaseAmt, subTotal);//item reciept vr
+	
+	System.out.println("");//Blank line
+	
+	itemSelection = validateItemMenu(input);//displaying item menu
+	
+	}//end of while loop
+	
+	//calculations
+	
+	tax = subTotal * TAX_RATE;
+	totalCost = subTotal + tax;
+	grandTotal = grandTotal + totalCost;
+	
+	displayOrderTotal(userName, subTotal, tax, totalCost);
+
+	subTotal = RESET_VALUE;
+	
+	rateSelection = validateMainMenu(input);
+	
+
+	
+
+	
+	}// end of while loop
+	
+
+
+
+	if (grandTotal > 0) 
+	{// if total is greater than 0 then it needs to display
+		displayFinalReport(memberCount, seniorCount, noDiscountRate, premiumCount, specialCount, basicCount, grandTotal);
+		displayFarewellMessage();//Display farewell Message
+	}//end of if
+	else {//begin of else
+
+	System.out.println("");//Blank line
+	displayFarewellMessage();//Display farewell Message
+	}//end of else
+	
+
+	
+	input.close();//Closing scanner
+
+}//end of if
+	
+	//void methods
+	
+	public static void displayItemReceipt(String itemName, double itemPrice, String discountName,
+			double discountRate, double discountAmount, double discountPrice, int howMany,double purchaseAmt, double subTotal) 
+	{//void method
+		// TODO Auto-generated method stub
+			System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+			System.out.println("Item Receipt");//Showing user the results
+			System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+			System.out.printf("%-5s%14s%7s\n", "Item:", "", itemName );//Displays itemName
+			System.out.printf("%-5s%5s%6.2f\n", "Original Price:", "$", itemPrice );//Displays originalPrice
+			System.out.printf("%-5s%12s\n", "Discount Name:", discountName );//Displays discountAmount
+			System.out.printf("%-5s%16.1f%1s\n", "Discount:", discountRate*100, "%" );//Displays discountRate
+			System.out.printf("%-5s%4s%6.2f\n", "Discount Amount:", "$", discountAmount );//Displays discountAmount
+			System.out.printf("%-5s%6s%6.2f\n", "Discount Price", "$", discountPrice );//Displays discountPrice
+			System.out.printf("%-5s%2s%15s\n", "Quantity:", "", howMany );//Displays howMany
+			System.out.printf("%-5s%4s%6.2f\n", "Purchase Amount:", "$", purchaseAmt );//Displays totalCost
+			System.out.printf("%-5s%11s%6.2f\n", "Subtotal:", "$", subTotal );//Displays subTotal
+			System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+	}//end of method
+
+
+private static void displayOrderTotal(String userName, double subTotal, double tax, double totalCost) 
+{//begin void
+		// TODO Auto-generated method stub
+	
+	System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+	System.out.println("Order Total");//Showing user the results
+	System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+	System.out.printf("%-5s%15s%6s\n", "User:", "", userName );//Displays userName
+	System.out.printf("%-5s%11s%6.2f\n", "Subtotal:", "$", subTotal );//Displays subTotal
+	System.out.printf("%-5s%15s%6.2f\n", "Tax:", "$", tax );//Displays tax
+	System.out.printf("%-5s%9s%6.2f\n", "Total Cost:", "$", totalCost );//Displays totalCost
+	System.out.println("~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~ ~~~~~");//Border for menu
+		
+	}//end void
+
+
+public static void displayFinalReport(int memberCount, int seniorCount, int noDiscountRate, int premiumCount, int specialCount, int basicCount,  double grandTotal) 
+{//void display
+	// TODO Auto-generated method stub
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+	System.out.println("FINAL REPORT");//title
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+	System.out.printf("%-5s%13s%2s%1d\n", DISCOUNT_NAME_MEMBER, "", "Count:",  memberCount );//Displays member counter
+	System.out.printf("%-5s%13s%2s%1d\n", DISCOUNT_NAME_SENIOR, "", "Count:",  seniorCount );//Displays member counter
+	System.out.printf("%-5s%8s%2s%1d\n", DISCOUNT_NAME_NONE, "", "Count:",  noDiscountRate );//Displays member counter
+	System.out.printf("%-5s%14s%2s%1d\n", ITEM_NAME_PREMUIM, "", "Count:",  premiumCount );//Displays premium counter
+	System.out.printf("%-5s%14s%2s%1d\n", ITEM_NAME_SPECIAL, "", "Count:",  specialCount );//Displays premium counter
+	System.out.printf("%-5s%12s%2s%1d\n", ITEM_NAME_BASIC, "", "Count:",  basicCount );//Displays premium counter
+	System.out.printf("%-5s%8s%6.2f\n", "Grand Total:", "$",  grandTotal );//Displays originalPrice
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+}//end of void display
+
+public static void displayFarewellMessage() 
+{//farewell method
+	// TODO Auto-generated method stub
+	System.out.println("Thank you for usuing Gamer Pro!");//Output line for farewell
+	System.out.println("Have a good day!");//Output line farewell
+	
+}//end of method
+
+public static void displayWelcomeBanner() 
+{//void method to display welcome banner
+	// TODO Auto-generated method stub
+	System.out.println("Welcome to Gaming Pro!"); //Displays welcome banner
+	System.out.println("Please select a product from the menu ");//Displays welcome message
+	System.out.println("Lets Get Started!");//Informs user program is about to begin
+		
+	}//end main method
+
+public static void displayMainMenu() 
+{//begin void
+	// TODO Auto-generated method stub
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+	System.out.println("Discount Menu");//Menu selection banner
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+	System.out.printf("%-5s%2s%4s%9s%1s\n", "[A]", DISCOUNT_NAME_MEMBER, "", DISCOUNT_RATE_MEMBER*100, "%");//discount member option
+	System.out.printf("%-5s%2s%4s%9s%1s\n", "[B]", DISCOUNT_NAME_SENIOR, "", DISCOUNT_RATE_SENIOR*100, "%");//discount senior option
+	System.out.printf("%-5s%2s%4s%4s%1s\n", "[C]", DISCOUNT_NAME_NONE, "", DISCOUNT_RATE_NONE*100, "%");//discount none option
+	System.out.printf("%-5s%2s%1s%1s\n", "[Q]", DISCOUNT_NAME_QUIT, "", "the program");
+	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+	System.out.println("Enter selection here:");//Asking for input for menu select
+	
+}//end void
+
+public static void displayItemMenu() 
+{//begin method
+	// TODO Auto-generated method stub
+
+System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+System.out.println("Item Menu");//Menu selection banner
+System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+System.out.printf("%-5s%2s%4s%7s%6s\n", "[A]", ITEM_NAME_PREMUIM, "", "$", ITEM_PRICE_PREMIUM);//item preminum option
+System.out.printf("%-5s%2s%4s%6s%6s\n", "[B]", ITEM_NAME_SPECIAL, "", "$", ITEM_PRICE_SPECIAL);//item speical option
+System.out.printf("%-5s%2s%4s%2s%6s\n", "[C]", ITEM_NAME_BASIC, "", "$", ITEM_PRICE_BASIC);//item basic option
+System.out.printf("%-5s%2s%1s\n", "[R]", ITEM_NAME_RETURN, "");
+System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+System.out.println("Enter selection here:");//Asking for input for menu selection
+	
+}//end method
+
+
+//vr methods
+
+
+public static int validateHowMany(Scanner validateHowMany)
+{//vr method
+// TODO Auto-generated method stub
+
+int howMany = 0;//declare variable
+
+System.out.println("How many would you like?");//Asking user for item name
+howMany = validateHowMany.nextInt();//Assigns howMany input
+
+if (howMany <= 0)//if the how many is less thab 0 it repeats
+{//begin of if
+	
+System.out.println("**INVALID SELECTION**");//Menu selection banner
+System.out.println("**PLEASE SELECT AGAIN**");//Informing user selection is not valid
+System.out.println("How many would you like?");//Asking user for item name
+howMany = validateHowMany.nextInt();//Assigns howMany input
+}//end of if
+
+return howMany;//returns how many
+}//end of method
+
+	public static char validateItemMenu(Scanner validateItemMenu) 
+	{//vr method
+	// TODO Auto-generated method stub
+		
+		char itemSelection = ' ';//declare variable
+		
+		displayItemMenu();
+		
+		itemSelection = validateItemMenu.next().toUpperCase().charAt(0);//Assigns menuSelection
+		
+
+		
+		while (itemSelection != 'A' && itemSelection != 'B' && itemSelection != 'C' && itemSelection != 'R')
+		{//Begin of validation loop
+			
+			System.out.println("**INVALID SELECTION**");//Menu selection banner
+			System.out.println("**PLEASE SELECT AGAIN**");//Informing user selection is not valid
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+			displayItemMenu();
+			
+			itemSelection = validateItemMenu.next().toUpperCase().charAt(0);//Assigns menuSelection	
+				
+		}//end of loop
+			
+	return itemSelection;// returns itemSelection
+}//end of method
+
+	
+
+	
+	
+
+
+
+public static char validateMainMenu(Scanner validateMainMenu) 
+{//main menu method oiption
+	// TODO Auto-generated method stub
+	
+	char rateSelection = ' ';
+	
+	displayMainMenu();
+	
+	rateSelection = validateMainMenu.next().toUpperCase().charAt(0);//Assigns menuSelection
+	
+	while (rateSelection != 'A' && rateSelection != 'B' && rateSelection != 'C' && rateSelection != 'Q') //while code for repeating menu if invalid response
+	{//Begin validation loop
+		
+		System.out.println("**INVALID SELECTION**");//Informing user selection is not valid
+		System.out.println("**PLEASE SELECT AGAIN**");//Informing user selection is not valid
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");//Border for menu
+		displayMainMenu();
+		
+		rateSelection = validateMainMenu.next().toUpperCase().charAt(0);//Assigns menuSelection
+	}//End validation loop
+	
+	return rateSelection;//returns rateSelections
+}//end of method
+
+
+
+public static String getUserName(Scanner getUserName)
+{//method to get user name
+	// TODO Auto-generated method stub
+	String userName = "";
+	
+	System.out.println("What is your name?");//Asking user for their name
+	userName = getUserName.nextLine();//Assigns userName input
+	return userName;//return value
+}//end of method
+
+
+
+}//end class main
